@@ -1,10 +1,15 @@
-api='6034962428:AAHQqEFD0AW4P9qMwuJuZSmIEqCaBgSDW6o'
 import logging
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler
 from telegram.ext import filters, MessageHandler, ApplicationBuilder, CommandHandler, ContextTypes
 import requests
 from random import choice 
+from json import load 
+
+with open("config.json", "r") as f:
+    data = load(f)
+    api = data["bot_token"]
+
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -33,7 +38,8 @@ async def truecaller(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 def search(num):
-    bearers = []
+    with open("config.json", "r") as f:
+        bearers = load(f)["bearers"]
     bearer = choice(bearers)
     head={
         "Host": "search5-noneu.truecaller.com",
@@ -41,7 +47,6 @@ def search(num):
         "accept-encoding": "gzip",
         "user-agent": "Truecaller/13.23.9 (Android;11)"
     } 
-    print(bearer)
     url = f"https://search5-noneu.truecaller.com/v2/search?q={num}&countryCode=IN&type=4&locAddr=&encoding=json"
     req=requests.get(url,headers=head)
     print(req)
